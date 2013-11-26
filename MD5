@@ -1,4 +1,4 @@
-2d053409761646d5ed8213967314ccfd *DESCRIPTION
+e9750f10072b3430471912dc16fdb3a0 *DESCRIPTION
 8b54e5a89fbda3af5e077053d40bec76 *NAMESPACE
 3f8ffe471800625822a08096313d8efd *R/IQ1.R
 7b38f8c49328edfec2649af90fa5d300 *R/IQ2.R
@@ -10,7 +10,7 @@
 fc9eb97b7c7d0570e538166cdd591624 *R/iqResids.default.R
 48a42054172f34f6187e944ced3858f6 *R/learnIQ1.R
 4bf3ee16241a46f71e1690b1ebdc20f9 *R/learnIQ1.default.R
-af8b7df828d31c572f779cec552db68c *R/learnIQ1Est.R
+0df87e607e4b3da750e0bf163f30f852 *R/learnIQ1Est.R
 c0c487bdc8e6b3cfd67109740df68801 *R/learnIQ1cm.R
 bef34c7b8cbdbbac8967b8957e19cb19 *R/learnIQ1cm.default.R
 8d4e0ccd853fbc9cdedb2b8125723cef *R/learnIQ1cm.formula.R
@@ -57,12 +57,11 @@ a166a41fe248cc1a2d3bdc4f27468a5d *R/summary.value.R
 e0b423688687eb5edca798fa19af2d1e *R/value.R
 ae91fec34b21c41c392b632f20545042 *R/value.default.R
 d023e7f654b0f2352262f69a5cecedf5 *R/valueEst.R
+8b2ba7fd07ed6a243ec94a7c561c39f9 *build/vignette.rds
 98066e0140251b933aa9064133933f7e *data/bmiData.RData
-e18cfaccc2a17b362d081b41cf47f8bf *inst/doc/figure1.jpeg
-41af4f08a4f16027437935f7d51bf3be *inst/doc/iqLearn.R
-ec60540e32efa3abad328f880a3a1d47 *inst/doc/iqLearn.Rnw
-3f9f69dded256e1bc590fbef20999508 *inst/doc/iqLearn.pdf
-5f873afe2abb47b621427fa894f118a6 *inst/doc/iq_cites.bib
+0e93988f54ed572d9dac1e3c8cf7ad2f *inst/doc/iqLearn.R
+d00e62d3b57449810104a4fc2f2ca208 *inst/doc/iqLearn.Rnw
+bbbb37d929ce38f147f9988d4d67d63f *inst/doc/iqLearn.pdf
 bdf9bb09647d78a8f2a2a7515519f1f1 *man/IQ1.Rd
 e0225f6452e8a6e0f84b091f29d2cfe9 *man/IQ2.Rd
 525a050b41172c2c87f5fbfedc7d5c74 *man/bmiData.Rd
@@ -92,3 +91,6 @@ c1c8deaa5f5d431ed855379611e5e10e *man/summary.learnIQ2.Rd
 ddac554e54c820e8fe35201f8c5045c8 *man/summary.qLearnS2.Rd
 20c12f57b46b105ee78c7447f917342b *man/summary.value.Rd
 9c7f3d05820adc41d6bd38f1dcece608 *man/value.Rd
+e18cfaccc2a17b362d081b41cf47f8bf *vignettes/figure1.jpeg
+d00e62d3b57449810104a4fc2f2ca208 *vignettes/iqLearn.Rnw
+a10d608ccf5b8c9c27da63b67cc16bb1 *vignettes/iq_cites.bib
