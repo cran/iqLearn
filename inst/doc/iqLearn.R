@@ -2,32 +2,32 @@
 ### Encoding: UTF-8
 
 ###################################################
-### code chunk number 1: iqLearn.Rnw:456-457
+### code chunk number 1: iqLearn.Rnw:477-478
 ###################################################
 options(width=70)
 
 
 ###################################################
-### code chunk number 2: iqLearn.Rnw:460-461
+### code chunk number 2: iqLearn.Rnw:481-482
 ###################################################
 library (iqLearn)
 
 
 ###################################################
-### code chunk number 3: iqLearn.Rnw:464-465
+### code chunk number 3: iqLearn.Rnw:485-486
 ###################################################
 data (bmiData)
 
 
 ###################################################
-### code chunk number 4: iqLearn.Rnw:470-472
+### code chunk number 4: iqLearn.Rnw:491-493
 ###################################################
 dim (bmiData)
 head (bmiData)
 
 
 ###################################################
-### code chunk number 5: iqLearn.Rnw:476-482
+### code chunk number 5: iqLearn.Rnw:497-503
 ###################################################
 bmiData$A1[which (bmiData$A1=="MR")] = 1
 bmiData$A1[which (bmiData$A1=="CD")] = -1
@@ -38,14 +38,14 @@ bmiData$A2 = as.numeric (bmiData$A2)
 
 
 ###################################################
-### code chunk number 6: iqLearn.Rnw:486-488
+### code chunk number 6: iqLearn.Rnw:507-509
 ###################################################
 y = -100*(bmiData$month12_BMI -
           bmiData$baseline_BMI)/bmiData$baseline_BMI
 
 
 ###################################################
-### code chunk number 7: iqLearn.Rnw:531-534
+### code chunk number 7: iqLearn.Rnw:552-555
 ###################################################
 fitIQ2 = learnIQ2 (y ~ gender + parent_BMI + month4_BMI + 
   A2*(parent_BMI + month4_BMI), data=bmiData, treatName="A2", 
@@ -53,50 +53,50 @@ fitIQ2 = learnIQ2 (y ~ gender + parent_BMI + month4_BMI +
 
 
 ###################################################
-### code chunk number 8: iqLearn.Rnw:551-553
+### code chunk number 8: iqLearn.Rnw:572-574
 ###################################################
 s2vars = bmiData[, c(1,3,5)]
 head (s2vars)
 
 
 ###################################################
-### code chunk number 9: iqLearn.Rnw:558-559
+### code chunk number 9: iqLearn.Rnw:579-580
 ###################################################
 s2ints = c (2,3)
 
 
 ###################################################
-### code chunk number 10: iqLearn.Rnw:562-563
+### code chunk number 10: iqLearn.Rnw:583-584
 ###################################################
 fitIQ2 = learnIQ2 (H2=s2vars, Y=y, A2=bmiData$A2, s2ints=s2ints)
 
 
 ###################################################
-### code chunk number 11: iqLearn.Rnw:567-568
+### code chunk number 11: iqLearn.Rnw:588-589
 ###################################################
 summary (fitIQ2)
 
 
 ###################################################
-### code chunk number 12: iqLearn.Rnw:574-575
+### code chunk number 12: iqLearn.Rnw:595-596
 ###################################################
 plot (fitIQ2)
 
 
 ###################################################
-### code chunk number 13: iqLearn.Rnw:584-585
+### code chunk number 13: iqLearn.Rnw:605-606
 ###################################################
 fitIQ2$betaHat20
 
 
 ###################################################
-### code chunk number 14: iqLearn.Rnw:588-589
+### code chunk number 14: iqLearn.Rnw:609-610
 ###################################################
 fitIQ2$betaHat21
 
 
 ###################################################
-### code chunk number 15: iqLearn.Rnw:615-619
+### code chunk number 15: iqLearn.Rnw:636-640
 ###################################################
 fitIQ1main = learnIQ1main (~ gender + race + parent_BMI + 
   baseline_BMI + A1*(gender + parent_BMI), data=bmiData, 
@@ -105,45 +105,45 @@ summary (fitIQ1main);
 
 
 ###################################################
-### code chunk number 16: iqLearn.Rnw:628-630
+### code chunk number 16: iqLearn.Rnw:649-651
 ###################################################
 s1vars = bmiData[, 1:4]
 head (s1vars)
 
 
 ###################################################
-### code chunk number 17: iqLearn.Rnw:636-637
+### code chunk number 17: iqLearn.Rnw:657-658
 ###################################################
 s1mainInts = c (1,3)
 
 
 ###################################################
-### code chunk number 18: iqLearn.Rnw:640-642
+### code chunk number 18: iqLearn.Rnw:661-663
 ###################################################
 fitIQ1main = learnIQ1main (object=fitIQ2, H1Main=s1vars,
     A1=bmiData$A1, s1mainInts=s1mainInts)
 
 
 ###################################################
-### code chunk number 19: iqLearn.Rnw:650-651
+### code chunk number 19: iqLearn.Rnw:671-672
 ###################################################
 plot (fitIQ1main)
 
 
 ###################################################
-### code chunk number 20: iqLearn.Rnw:660-661
+### code chunk number 20: iqLearn.Rnw:681-682
 ###################################################
 fitIQ1main$alphaHat0
 
 
 ###################################################
-### code chunk number 21: iqLearn.Rnw:664-665
+### code chunk number 21: iqLearn.Rnw:685-686
 ###################################################
 fitIQ1main$alphaHat1
 
 
 ###################################################
-### code chunk number 22: iqLearn.Rnw:681-687
+### code chunk number 22: iqLearn.Rnw:702-708
 ###################################################
 fitIQ1cm = learnIQ1cm (~ gender + race + parent_BMI + 
   baseline_BMI + A1*(gender + parent_BMI + baseline_BMI),
@@ -154,50 +154,50 @@ summary (fitIQ1cm)
 
 
 ###################################################
-### code chunk number 23: iqLearn.Rnw:698-699
+### code chunk number 23: iqLearn.Rnw:719-720
 ###################################################
 s1cmInts = c (1,3,4)
 
 
 ###################################################
-### code chunk number 24: iqLearn.Rnw:702-704
+### code chunk number 24: iqLearn.Rnw:723-725
 ###################################################
 fitIQ1cm = learnIQ1cm (object=fitIQ2, H1CMean=s1vars, A1=bmiData$A1,
     s1cmInts=s1cmInts); 
 
 
 ###################################################
-### code chunk number 25: iqLearn.Rnw:709-710
+### code chunk number 25: iqLearn.Rnw:730-731
 ###################################################
 plot (fitIQ1cm)
 
 
 ###################################################
-### code chunk number 26: iqLearn.Rnw:720-721
+### code chunk number 26: iqLearn.Rnw:741-742
 ###################################################
 fitIQ1cm$betaHat10
 
 
 ###################################################
-### code chunk number 27: iqLearn.Rnw:724-725
+### code chunk number 27: iqLearn.Rnw:745-746
 ###################################################
 fitIQ1cm$betaHat11
 
 
 ###################################################
-### code chunk number 28: iqLearn.Rnw:733-734
+### code chunk number 28: iqLearn.Rnw:754-755
 ###################################################
 fitIQ1var = learnIQ1var (fitIQ1cm)
 
 
 ###################################################
-### code chunk number 29: iqLearn.Rnw:739-740
+### code chunk number 29: iqLearn.Rnw:760-761
 ###################################################
 fitIQ1var = learnIQ1var (object=fitIQ1cm, method="homo")
 
 
 ###################################################
-### code chunk number 30: iqLearn.Rnw:758-765
+### code chunk number 30: iqLearn.Rnw:779-786
 ###################################################
 fitIQ1var = learnIQ1var (~ gender + race + parent_BMI + 
   baseline_BMI + A1*(parent_BMI), data=bmiData, treatName="A1",
@@ -209,44 +209,44 @@ summary (fitIQ1var)
 
 
 ###################################################
-### code chunk number 31: iqLearn.Rnw:770-771
+### code chunk number 31: iqLearn.Rnw:791-792
 ###################################################
 plot (fitIQ1var)
 
 
 ###################################################
-### code chunk number 32: iqLearn.Rnw:779-780
+### code chunk number 32: iqLearn.Rnw:800-801
 ###################################################
 fitIQ1var$gammaHat0
 
 
 ###################################################
-### code chunk number 33: iqLearn.Rnw:783-784
+### code chunk number 33: iqLearn.Rnw:804-805
 ###################################################
 fitIQ1var$gammaHat1
 
 
 ###################################################
-### code chunk number 34: iqLearn.Rnw:801-802
+### code chunk number 34: iqLearn.Rnw:822-823
 ###################################################
 fitResids = iqResids (fitIQ1var)
 
 
 ###################################################
-### code chunk number 35: iqLearn.Rnw:806-807
+### code chunk number 35: iqLearn.Rnw:827-828
 ###################################################
 plot (fitResids)
 
 
 ###################################################
-### code chunk number 36: iqLearn.Rnw:825-827
+### code chunk number 36: iqLearn.Rnw:846-848
 ###################################################
 fitIQ1 = learnIQ1 (mainObj=fitIQ1main, cmObj=fitIQ1cm, sigObj=fitIQ1var, 
     dens="nonpar")  
 
 
 ###################################################
-### code chunk number 37: iqLearn.Rnw:852-859
+### code chunk number 37: iqLearn.Rnw:873-880
 ###################################################
 h1 = c (1, 1, 30, 35)
 h1main = h1
@@ -258,7 +258,7 @@ optIQ1
 
 
 ###################################################
-### code chunk number 38: iqLearn.Rnw:870-873
+### code chunk number 38: iqLearn.Rnw:891-894
 ###################################################
 h2 = c (1, 30, 45);
 optIQ2 = IQ2 (fitIQ2, h2);
@@ -266,7 +266,7 @@ optIQ2
 
 
 ###################################################
-### code chunk number 39: iqLearn.Rnw:890-894
+### code chunk number 39: iqLearn.Rnw:911-915
 ###################################################
 fitQ2 = qLearnS2 (H2=s2vars, Y=y, A2=bmiData$A2, s2ints=s2ints);
 fitQ2 = qLearnS2 (y ~ gender + parent_BMI + month4_BMI +
@@ -275,7 +275,7 @@ fitQ2 = qLearnS2 (y ~ gender + parent_BMI + month4_BMI +
 
 
 ###################################################
-### code chunk number 40: iqLearn.Rnw:903-908
+### code chunk number 40: iqLearn.Rnw:924-929
 ###################################################
 fitQ1 = qLearnS1 (object=fitQ2, H1q=s1vars, A1=bmiData$A1,
     s1ints=c(3,4)); 
@@ -285,7 +285,7 @@ fitQ1 = qLearnS1 (~ gender + race + parent_BMI + baseline_BMI +
 
 
 ###################################################
-### code chunk number 41: iqLearn.Rnw:916-920
+### code chunk number 41: iqLearn.Rnw:937-941
 ###################################################
 fitQ2$betaHat20
 fitQ2$betaHat21
@@ -294,7 +294,7 @@ fitQ1$betaHat11
 
 
 ###################################################
-### code chunk number 42: iqLearn.Rnw:940-948
+### code chunk number 42: iqLearn.Rnw:961-969
 ###################################################
 summary (fitQ1)
 h1q = c (1, 1, 30, 35);
@@ -307,7 +307,7 @@ optQ2
 
 
 ###################################################
-### code chunk number 43: iqLearn.Rnw:986-989
+### code chunk number 43: iqLearn.Rnw:1007-1010
 ###################################################
 estVal = value (d1=fitIQ1$optA1, d2=fitIQ2$optA2, Y=y, A1=bmiData$A1, 
   A2=bmiData$A2)

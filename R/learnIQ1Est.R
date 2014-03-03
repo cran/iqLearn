@@ -42,10 +42,10 @@ learnIQ1Est <- function (mainObj, cmObj, sigObj, dens){
         q1HatPos = rep (NA, n);
         q1HatNeg = rep (NA, n);
         for (i in 1:n){
-            opPos = sum (abs (muPos[i] + sigPos[i]*sigObj$stdResids) *
-                (A1==1))/sum (A1==1); 
-            opNeg = sum (abs (muNeg[i] + sigNeg[i]*sigObj$stdResids) *
-                (A1==-1))/sum(A1==-1); 
+            opPos = sum (abs (muPos[i] +
+                sigPos[i]*sigObj$stdResids));  
+            opNeg = sum (abs (muNeg[i] +
+                sigNeg[i]*sigObj$stdResids));  
             q1HatPos[i] = lhatPos[i] + opPos;
             q1HatNeg[i] = lhatNeg[i] + opNeg;
         }

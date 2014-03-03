@@ -28,7 +28,7 @@
 
 \begin{abstract}
 \vspace{-0.08in}
-  Chronic illness treatment strategies must adapt to the 
+Chronic illness treatment strategies must adapt to the 
   evolving health status of the patient receiving treatment.  Data-driven  
   dynamic treatment regimes can offer guidance for clinicians 
   and intervention scientists on how to treat patients over time in
@@ -42,7 +42,8 @@
   is an alternative to Q-learning that only requires 
   modeling smooth, monotone transformations of the data. The
   \proglang{R} package \pkg{iqLearn} provides functions for
-  implementing the IQ-learning algorithm. We demonstrate how to
+  implementing both the IQ-learning and Q-learning algorithms. We
+  demonstrate how to 
   estimate a two-stage optimal treatment policy with \pkg{iqLearn}
   using a generated data set \code{bmiData} which mimics a two-stage
   randomized body mass index reduction trial with binary treatments at
@@ -51,7 +52,8 @@
 \hrule
 \vspace{0.1in}
 
-\noindent {\em Keywords:} Interactive Q-learning; Q-learning; Dynamic Treatment Regimes; Dynamic Programming; SMART design.
+\noindent {\em Keywords:} Interactive Q-learning; Q-learning; Dynamic
+Treatment Regimes; Dynamic Programming; SMART design. 
 
 %\VignetteIndexEntry{Using iqLearn}
 
@@ -67,20 +69,23 @@ pre-specified desirable outcome if, when applied to assign treatment
 to a population of interest, it yields the maximal expected outcome. 
 
 With the potential for better patient outcomes, reduced treatment
-burden, and lower cost, there is growing interest in personalized treatment
+burden, and cost, there is growing interest in personalized treatment
 strategies \citep{Ham+Col:10, pmc:10}.   
 Sequential Multiple Assignment Randomized Trials
 \citep[SMARTs][]{Lav+Daw:04, Mur:05a} are designed for the estimation
 of optimal DTRs.  In a SMART, subjects are randomized to treatment at
 each decision
 point or \emph{stage} of the trial. Figure~\ref{smart} contains a
-visual representation of an example SMART design where all subjects
+visual representation of an example SMART toy example where all
+subjects 
 receive the same treatment at baseline (e.g., possibly a standard of
-care) and are then randomized (represented by gold circles) at the
+care). After some period of time in the baseline stage, patients are
+then randomized (represented by gold circles) at the 
 start of the first stage to one of two treatment categories:
-``switch'' or ``augment'' current treatment.  At the start of the
-second stage, subjects are again randomized to either switch or
-augment their current treatment(s). There are many variations of this
+``switch'' or ``augment'' current treatment.  After some period of
+time in the first stage, subjects are again randomized to either switch or
+augment their current treatment(s) in the second stage. There are many
+variations of this 
 design; for example, more than two treatments can be offered at each
 stage, and for ethical reasons it is common to include an option for
 baseline or first-stage 
@@ -88,28 +93,30 @@ responders to continue their currently successful
 treatment. Although it is possible to design a trial with additional
 stages, two stage SMARTs are common, as evidenced by many recently
 completed and ongoing SMARTs. For a list of SMARTs that have
-finished or are in the field, see\citet{psu:12} and Eric Laber's
+finished or are in the field, see \citet{psu:12} and Eric Laber's
 current list \citet{eblSmart}. With additional
 randomizations beyond one or two stages, the number of patients
 assigned to each sequence of 
 treatments decreases, along with the power to estimate optimal
-decisions in the later stages. The sequential randomization scheme in
-STARTs guarantees that there are no confounders that influence which
+decisions in the later stages. In principle, the sequential
+randomization scheme in 
+SMARTs guarantees that there are no confounders that influence which
 types of subjects follow each of the possible treatment sequences. To
 keep our discussion focused, we will work under the assumption of a
 two-stage SMART with randomized binary treatments at each
 stage. However, all the methods discussed here apply to observational
 data when additional assumptions are made on the treatment assignment
-mechanism \citep[see, for example,][]{Mur:03}.
+mechanism \citep[see, for example,][]{Mur:03, Moo+etal:12}.
 \begin{figure}
 \begin{center}
 \includegraphics[scale=.6]{figure1.jpeg}
 \end{center}
-\caption{Example of a SMART design with two randomized stages and two
-  treatment options at each stage. Randomizations are represented by
-  gold circles.}\label{smart}
+\caption{SMART design toy example with two randomized stages and two
+  treatment options at each stage. Patients progress from left to
+  right and are randomized to one of two treatment options just prior to
+  Stages 1 and 2. Randomizations are represented by
+  gold circles; treatments are displayed in blue boxes.}\label{smart}
 \end{figure}
-
 
 
 We introduce package \pkg{iqLearn} \citep{iqLearn} in \proglang{R} \citep{R} for estimating 
@@ -117,30 +124,35 @@ optimal DTRs from data obtained from a two stage
 trial with two treatments at each stage using Interactive 
 Q-learning 
 \citep[IQ-learning; ][]{Lab+etal:13}. 
-Functions for estimation by the Q-learning
-algorithm are also included in this package. Introductions to both
-Q- and 
+Although we recommend using IQ-learing instead of Q-learning in most
+practical settings based on developments in Section 2 
+and \cite{Lab+etal:13}, a comparison of the regimes estimated by the
+two methods may be of 
+interest to some data analysts. Thus, functions for estimation of a
+regime by the Q-learning 
+algorithm are also included in \pkg{iqLearn} for completeness.
+ Introductions to both Q- and 
 IQ-learning are provided in Section 2. Section 3 provides a
 case-study 
 illustrating the \pkg{iqLearn} package.  A brief discussion of future
 work concludes the paper in Section 4.  
 
-\section{Q-learning and Interactive Q-learning}
+\section{$Q$-learning and Interactive $Q$-learning}
 We assume data are collected from a two-stage randomized trial with 
 binary treatments at each stage, resulting in $n$ $\hbox{i.i.d.}$ patient
 trajectories of the form $\allowbreak (\bX_{1}, A_{1}, \bX_{2}, A_{2},
 Y)$. The variables in the trajectory are: baseline covariates,
 $\bX_{1} \in \mathbb{R}^{p_1}$; first-stage randomized treatment,
 $A_{1} \in \{-1, 1\}$; covariates collected during the first-stage but
-prior to second-stage treatment assignment, $X_{2} \in
+prior to second-stage treatment assignment, $\bX_{2} \in
 \mathbb{R}^{p_2}$; second-stage randomized treatment, $A_{2}\in
 \lbrace -1, 1\rbrace$; and the response, $Y \in \mathbb{R}$, collected 
 at the conclusion of the trial. We assume $Y$ has been coded so that
 higher values indicate more positive clinical outcomes.  To simplify
 notation, we group variables collected prior to each treatment
 randomization into a history vector $\bH_{t}$, $t=1,2$. That is,
-$\bH_{1} = \bX_{1}$ and $\bH_{2}=(\bX_{1}^{\top}, A_{1},
-\bX_{2}^{\top})^{\top}$. 
+$\bH_{1} = \bX_{1}$ and $\bH_{2}=(\bX_{1}^{\T}, A_{1},
+\bX_{2}^{\T})^{\T}$. 
 
 A DTR is a pair of functions ${\boldsymbol \pi} = (\pi_1, \pi_2)$ where
 $\pi_t$ maps the domain of $\bH_t$ into the space of 
@@ -159,17 +171,17 @@ maximizes the value function:
   \mathbb{E}^{{\boldsymbol \pi}^{\hbox{\scriptsize  opt}}}(Y) = \sup_{{\boldsymbol \pi}} \mathbb{E}^{{\boldsymbol \pi}} Y.
 \end{equation*}
 In the next two sections, we explain how an optimal regime can be 
-estimated from data using Q-learning and IQ-learning. The
-IQ-learning estimated optimal decision rules will be denoted by
-$\pi_{t}^{\hbox{\scriptsize IQ-opt}}$ and the Q-learning analogs by $\pi_{t}^{\hbox{\scriptsize Q-opt}}$.
+estimated from data using $Q$-learning and $IQ$-learning. The
+$IQ$-learning estimated optimal decision rules will be denoted by
+$\pi_{t}^{IQ-\hbox{\scriptsize  opt}}$ and the $Q$-learning analogs by $\pi_{t}^{Q-\hbox{\scriptsize  opt}}$.
 Both methods are implemented in the \pkg{iqLearn} package.  
 
-\subsection{Q-learning}
+\subsection{$Q$-learning}
 
-Q-learning \citep{Wat:89, Wat+Day:92, Mur:05b} is an approximate 
+$Q$-learning \citep{Wat:89, Wat+Day:92, Mur:05b} is an approximate 
 dynamic programming algorithm that can be used to estimate an optimal 
 DTR from observational or randomized study data.  Define the
-Q-functions:
+$Q$-functions:
 \begin{eqnarray*}
   Q_{2}(\bh_{2}, a_{2}) &\triangleq& \mathbb{E}(Y | \bH_{2}=\bh_{2},
   A_{2}=a_{2}), \\
@@ -177,50 +189,50 @@ Q-functions:
       \in \{-1, 1\}} Q_{2}(\bH_{2}, a_{2}) | \bH_{1}=\bh_{1},
     A_{1}=a_{1} \right). 
 \end{eqnarray*}
-The Q-function at stage two measures the {\bf Q}uality of assigning
+The $Q$-function at stage two measures the {\bf Q}uality of assigning
 $a_{2}$ to a patient presenting with history $\bh_{2}$. Similarly,
 $Q_{1}$ measures the quality of assigning $a_{1}$ to a patient with
 $\bh_{1}$, assuming an optimal decision rule will be followed at stage
-two. Were the Q-functions known, dynamic programming \citep{Bel:57}
+two. Were the $Q$-functions known, dynamic programming \citep{Bel:57}
 gives the optimal solution, $\pi_{t}^{\hbox{ \scriptsize opt}}(\bh_{t}) = \arg \max_{a_{t}
   \in \{ -1, 1\}} Q_{t}(\bh_{1}, a_{t})$.  Since the underlying
 distribution of the patient histories is not known, the conditional
-expectations that define the Q-functions are unknown and must be
-approximated.  Q-learning approximates the Q-functions with
+expectations that define the $Q$-functions are unknown and must be
+approximated.  $Q$-learning approximates the $Q$-functions with
 regression models; commonly linear models are chosen in practice
 because they yield simple, interpretable models.  We will consider
 linear models of the form:
 % \begin{equation*}
-$Q_{t}(\bh_{t}, a_{t}; \beta_{t}) = \bh_{t0}^{\top}\beta_{t0} +
-a_{t}\bh_{t1}^{\top}\beta_{t1}, \;  t=1,2,$
+$Q_{t}(\bh_{t}, a_{t}; \beta_{t}) = \bh_{t0}^{\T}\beta_{t0} +
+a_{t}\bh_{t1}^{\T}\beta_{t1}, \;  t=1,2,$
 % \end{equation*}
-where $\bh_{t0}$ and $\bh_{t1}$ include a subset of variables
-collected in $\bh_{t}$. Define $\beta_{t} \triangleq (\beta_{t0}^{\top},
-\beta_{t1}^{\top})^{\top}$. The Q-learning algorithm is given below.
+where $\bh_{t0}$ and $\bh_{t1}$ include an intercept and a subset of variables
+collected in $\bh_{t}$. Define $\beta_{t} \triangleq (\beta_{t0}^{\T},
+\beta_{t1}^{\T})^{\T}$. The $Q$-learning algorithm is given below.
 
 \vspace{5mm}
 
-\noindent {\bf Q-learning Algorithm:}    
+\noindent {\bf $Q$-learning Algorithm:}    
 \begin{center}
   \begin{tabular}{| l p{3.3in} |}
     \hline
     Q1. Modeling: & Regress $Y$ on $\bH_{20}, \bH_{21}, A_{2}$ to
     obtain \\ 
     & $\widehat{Q}_{2} (\bH_{2}, A_{2}; \widehat{\beta}_{2}) =
-    \bH_{20}^{\top}\widehat{\beta}_{20} +
-    A_{2}\bH_{21}^{\top}\widehat{\beta}_{21}$. \\ 
+    \bH_{20}^{T}\widehat{\beta}_{20} +
+    A_{2}\bH_{21}^{T}\widehat{\beta}_{21}$. \\ 
     & \\
     Q2. Maximization: & Define $\widetilde{Y} \triangleq \max_{a_{2} \in \{
       -1,1\}} \widehat{Q}_{2}(\bH_{2}, a_{2},
     \widehat{\beta}_{2})$. \\  
-    & $\widetilde{Y} = \bH_{20}^{\top}\widehat{\beta}_{20} +
-    |\bH_{21}^{\top}\widehat{\beta}_{21}|$ is the predicted future
+    & $\widetilde{Y} = \bH_{20}^{T}\widehat{\beta}_{20} +
+    |\bH_{21}^{T}\widehat{\beta}_{21}|$ is the predicted future
     outcome assuming  the optimal decision is made at stage two. \\  
     & \\
     Q3. Modeling: & Regress $\widetilde{Y}$ on $\bH_{10}, \bH_{11}, A_{1}$ to obtain \\
     & $\widehat{Q}_{1} (\bH_{1}, A_{1}; \widehat{\beta}_{1}) =
-    \bH_{10}^{\top}\widehat{\beta}_{10} +
-    A_{1}\bH_{11}^{\top}\widehat{\beta}_{11}$. \\ 
+    \bH_{10}^{T}\widehat{\beta}_{10} +
+    A_{1}\bH_{11}^{T}\widehat{\beta}_{11}$. \\ 
     \hline
   \end{tabular}
 \end{center}
@@ -228,29 +240,29 @@ The $t^{\hbox{\scriptsize th}}$-stage optimal decision rule then
 assigns the treatment $a_{t}$ that maximizes the estimated
 $Q_{t}$-function, 
 \begin{equation*}
-  \widehat{\pi}_{t}^{\hbox{\scriptsize Q-opt}}(\bh_{t}) = \arg\max_{a_{t}}
+  \widehat{\pi}_{t}^{Q-\hbox{\scriptsize opt}}(\bh_{t}) = \arg\max_{a_{t}}
   \widehat{Q}_{t}(\bh_{t}, a_{t}; \widehat{\beta}_{t}).
 \end{equation*}
-In Q-learning with linear models, this can be written as
+In $Q$-learning with linear models, this can be written as
 \begin{eqnarray*}
-  \widehat{\pi}_{t}^{\hbox{\scriptsize Q-opt}}(\bh_{t}) =
-  \mbox{sign}(\bh_{t1}^{\top}\widehat{\beta}_{t1}) 
+  \widehat{\pi}_{t}^{Q-\hbox{\scriptsize opt}}(\bh_{t}) =
+  \mbox{sign}(\bh_{t1}^{\T}\widehat{\beta}_{21}) 
 \end{eqnarray*}
 
-The first modeling step in the Q-learning algorithm is a standard
+The first modeling step in the $Q$-learning algorithm is a standard
 multiple regression problem to which common model building and model
 checking techniques can be applied to find a parsimonious, well-fitting
 model.  The absolute value in the definition of $\widetilde{Y}$ arises
 when $A_{2}$ is coded as $\{-1, 1\}$, since $\arg\max_{a_{2}}
 \widehat{Q}_{2}(\bH_{2}, a_{2}; \widehat{\beta}_{2}) =
-\mbox{sign}(\bH_{21}^{\top}\widehat{\beta}_{21})$. The second modeling
+\mbox{sign}(\bH_{21}^{\T}\widehat{\beta}_{21})$. The second modeling
 step (Q3) requires modeling the conditional expectation of
 $\widetilde{Y}$. This can be written as
 \begin{eqnarray}
   \label{q1fn}
   Q_{1}(\bH_{1}, A_{1}) &=& \mathbb{E}(\widetilde{Y} | \bH_{1}, A_{1})
   \nonumber \\ 
-  &=& \mathbb{E} (\bH_{20}^{\top}\beta_{20} + |\bH_{21}^{\top}\beta_{21}|
+  &=& \mathbb{E} (\bH_{20}^{\T}\beta_{20} + |\bH_{21}^{\T}\beta_{21}|
   \; |\;  \bH_{1}, A_{1}).
 \end{eqnarray}
 Due to the
@@ -258,43 +270,43 @@ absolute value function, $\widetilde{Y}$ is a nonsmooth, nonmonotone transformat
 in step Q3 is generally misspecified. In addition, the nonsmooth,
 nonmonotone $\max$ operator
 in step Q2 leads to difficult nonregular inference for the parameters
-that index the first stage Q-function \citep{Rob:04,
-  Cha+etal:10, Lab+etal:10, Son+etal:11}. In the next section, we
-develop an alternative to Q-learning, which we call IQ-learning, that
+that index the first stage $Q$-function \citep{Rob:04,
+  Cha+etal:10, Lab+etal:10, Son+etal:11, Cha+etal:13}. In the next section, we
+develop an alternative to $Q$-learning, which we call $IQ$-learning, that
 addresses the applied problem of building good models for the first-stage
-Q-function and avoids model misspecification for a large class of 
+$Q$-function and avoids model misspecification for a large class of 
 generative models. 
 
-\subsection{Interactive Q-learning (IQ-learning)}
-IQ-learning differs from Q-learning in the order in which
-maximization step (Q2 in the Q-learning algorithm) is performed.  We
+\subsection{Interactive $Q$-learning ($IQ$-learning)}
+$IQ$-learning differs from $Q$-learning in the order in which
+maximization step (Q2 in the $Q$-learning algorithm) is performed.  We
 demonstrate how the maximization step can be delayed, enabling all
 modeling to be performed \emph{before} this nonsmooth, nonmonotone
 transformation.  This reordering of modeling and maximization steps
 facilitates the use of standard, \emph{interactive} model building
 techniques because all terms to be modeled are linear, and hence
 smooth and monotone, transformations of the data. For a large class of
-generative models, IQ-learning more accurately estimates the
-first-stage Q-function, resulting in a higher-quality estimated
-decision rule \citep{Lab+etal:13}. Another advantage of IQ-learning
+generative models, $IQ$-learning more accurately estimates the
+first-stage $Q$-function, resulting in a higher-quality estimated
+decision rule \citep{Lab+etal:13}. Another advantage of $IQ$-learning
 is that in many cases, conditional mean and variance modeling
 techniques \citep{Car+Rup:88} offer a nice framework for the necessary
 modeling steps.  These mean and variance models are interpretable, and
 the coefficients indexing them enjoy normal limit theory. Thus, they
 are better suited to inform clinical practice than the misspecified
-first-stage model in Q-learning whose indexing parameters are
+first-stage model in $Q$-learning whose indexing parameters are
 nonregular.  However, the mean-variance modeling approach
 we advocate here is not necessary and other modeling techniques
 may be applied as needed.  Indeed, a major advantage and motivation
-for IQ-learning is the ability for the seasoned applied 
+for $IQ$-learning is the ability for the seasoned applied 
 statistician to build high-quality models using standard 
 interactive techniques for model diagnosis and validation.  
 
-IQ- and Q-learning do not differ at
+$IQ$- and $Q$-learning do not differ at
 step one (Q1), which we refer to as the \emph{second-stage
   regression}. Define
-$m(\bH_{2}; \beta_{2}) \triangleq \bH_{20}^{\top}\beta_{20}$, and 
-$\Delta (\bH_{2}; \beta_{2}) \triangleq \bH_{21}^{\top}\beta_{21}.$
+$m(\bH_{2}; \beta_{2}) \triangleq \bH_{20}^{\T}\beta_{20}$, and 
+$\Delta (\bH_{2}; \beta_{2}) \triangleq \bH_{21}^{\T}\beta_{21}.$
 We call the first term the \emph{main effect function} and the
 second the \emph{contrast function}. $\Delta(\bH_{2}; \beta_{2})$
   ``contrasts'' the quality of the second-stage treatments:
@@ -302,7 +314,7 @@ second the \emph{contrast function}. $\Delta(\bH_{2}; \beta_{2})$
   $\Delta (\bH_{2}; \beta_{2}) = \frac{1}{2}\{ Q_{2}(\bH_{2}, A_{2} =
   1) - Q_{2}(\bH_{2}, A_{2}=-1)\}.$
   % \end{equation*}
-  In the IQ-learning framework, the first-stage Q-function is
+  In the $IQ$-learning framework, the first-stage $Q$-function is
   defined as
   \begin{equation}
     \label{iq1fn}
@@ -311,40 +323,40 @@ second the \emph{contrast function}. $\Delta(\bH_{2}; \beta_{2})$
   \end{equation}
   where $g(\cdot \mid \bh_{1}, a_{1})$ is the conditional distribution of
   the contrast function $\Delta(\bH_{2}; \beta_{2})$ given
-  $\bH_{1}=\bh_{1}$ and $A_{1}=a_{1}$. In fact, Equation~\ref{iq1fn} is
-  equivalent to the representation of $Q_{1}$ in Equation~\ref{q1fn}, only
+  $\bH_{1}=\bh_{1}$ and $A_{1}=a_{1}$. In fact, \eqref{iq1fn} is
+  equivalent to the representation of $Q_{1}$ in \eqref{q1fn}, only
   the conditional expectation has been split into two separate
   expectations and the second has been written in integral form.
-  Instead of modeling the conditional expectation in Equation~\ref{q1fn}
-  directly, IQ-learning separately models $\mathbb{E}( m(\bH_{2};
+  Instead of modeling the conditional expectation in \eqref{q1fn}
+  directly, $IQ$-learning separately models $\mathbb{E}( m(\bH_{2};
   \beta_{2}) | \bH_{1}=\bh_{1}, A_{1}=a_{1})$ and $g(\cdot \mid
-  \bh_{1}, a_{1})$. Although IQ-learning trades one 
+  \bh_{1}, a_{1})$. Although $IQ$-learning trades one 
   modeling step (Q3) for two, splitting up the conditional
-  expectation in Equation~\ref{q1fn} is advantageous because the terms that
+  expectation in \eqref{q1fn} is advantageous because the terms that
   require modeling are now smooth, monotone functionals of the
-  data. The maximization occurs when the integral in Equation~\ref{iq1fn} is
+  data. The maximization occurs when the integral in \eqref{iq1fn} is
   computed, which occurs after the conditional density $g(\cdot \mid
-  \bh_{1}, a_{1})$ has been estimated.  The IQ-learning algorithm is 
-  described next.
+  \bh_{1}, a_{1})$ has been estimated.  The $IQ$-learning algorithm is 
+  given below.
   
-\newpage  
-  \noindent {\bf IQ-learning Algorithm:}
+\newpage
+  
+  \noindent {\bf $IQ$-learning Algorithm:}
   \begin{center}
     \begin{tabular}{|l p{3.3in} |}
       \hline
       IQ1. Modeling: & Regress $Y$ on $\bH_{20}, \bH_{21}, A_{2}$ to
       obtain \\ 
       & $\widehat{Q}_{2}^{IQ} (\bH_{2}, A_{2}; \widehat{\beta}_{2}) =
-      \bH_{20}^{\top}\widehat{\beta}_{20} +
-      A_{2}\bH_{21}^{\top}\widehat{\beta}_{21}$.  \\ 
+      \bH_{20}^{T}\widehat{\beta}_{20} +
+      A_{2}\bH_{21}^{T}\widehat{\beta}_{21}$.  \\ 
       & \\
-      IQ2. Modeling: & Regress observed data
-      $\{\bH_{20,i}^{\top}\widehat{\beta}_{20}\}_{i=1}^{n}$ on 
-      $\{\bH_{10,i}, \bH_{11,i}, A_{1,i}\}_{i=1}^{n}$ to obtain an estimator $\widehat{\ell}(\bH_{1},
-      A_{1})$ of $\mathbb{E}(\bH_{20}^{\top}\beta_{20} | \bH_{1},
+      IQ2. Modeling: & Regress $\bH_{20}^{T}\widehat{\beta}_{20}$ on
+      $\bH_{1}, A_{1}$ to obtain an estimator $\widehat{\ell}(\bH_{1},
+      A_{1})$ of $\mathbb{E}(\bH_{20}^{T}\beta_{20} | \bH_{1},
       A_{1})$. \\ 
       & \\
-      IQ3. Modeling: & Use $\{ (\bH_{21,i}^{\top}\widehat{\beta}_{21},
+      IQ3. Modeling: & Use $\{ (\bH_{21,i}^{T}\widehat{\beta}_{21},
       \bH_{1,i}, A_{1,i}) \}_{i=1}^{n}$ to obtain an estimator
       $\widehat{g}(\cdot \mid \bH_{1}, A_{1})$ of $g(\cdot \mid \bH_{1}, A_{1})$. \\ 
       & \\
@@ -355,13 +367,22 @@ second the \emph{contrast function}. $\Delta(\bH_{2}; \beta_{2})$
       \hline
     \end{tabular}
   \end{center}
-  The IQ-learning estimated optimal DTR
+  The $IQ$-learning estimated optimal DTR
   assigns the treatment at stage $t$ as the maximizer of the estimated
-  stage-$t$ Q-function
+  stage-$t$ $Q$-function
   % \begin{equation*}
-  $\widehat{\pi}_{t}^{\hbox{\scriptsize IQ-opt}}(\bh_{t}) = \arg\max_{a_{t}}
+  $\widehat{\pi}_{t}^{IQ-\hbox{\scriptsize opt}}(\bh_{t}) = \arg\max_{a_{t}}
   \widehat{Q}_{t}^{IQ}(\bh_{t}, a_{t}; \widehat{\beta}_{t})$.
   % \end{equation*}
+
+  We note that it is possible to obtain $\hat{Q}_{1}^{IQ}$ in IQ4 by modeling the
+bivariate conditional distribution of $m(\bH_{2}; \beta_{2})$ and
+$\Delta(\bH_{2}; \beta_{2})$ given $\bH_{1}$ and $A_{1}$ instead of
+separate modeling steps IQ2 and IQ3. However, it is
+often easier to assess model fits using standard 
+residual diagnostics and other well-established model checking tools
+when $\mathbb{E}(\bH_{20}^{\top}\beta_{20} \mid \bH_{1}, A_{1})$ and
+$g(\cdot \mid \bH_{1}, A_{1})$ are modeled separately. 
 
 \subsection{Remark about density estimation in IQ3}
 
@@ -396,7 +417,7 @@ empirical distribution estimator for $\widehat{\phi}$.
 
   \section[Using the iqLearn Package]{Using the \pkg{iqLearn} Package} 
   
-  \subsection{Preparing dataset bmiData}
+  \subsection{Preparing dataset \code{bmiData}}
   
 The examples in this section will be illustrated using a
 simulated dataset called \pkg{bmiData} which is included in the
@@ -875,7 +896,7 @@ optIQ2
 Similar to \code{IQ1}, a list is returned that contains the value of
 the second-stage $Q$-function when $A_{2} = 1$ (\code{\$q2Pos}) and 
 $A_{2} = -1$ (\code{\$q2Neg}) as
-well as the recommended second-stage treatment, (\code{\$q2opt}). 
+well as the recommended second-stage treatment, \code{\$q2opt}). 
  
 \subsection{$Q$-learning functions}
 
