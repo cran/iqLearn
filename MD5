@@ -1,4 +1,4 @@
-2281d3ee5fb045a3488b619bc9f902d7 *DESCRIPTION
+1ee7d606dc4b7f9a8d2ca4c5da501624 *DESCRIPTION
 50827c41f0ec728cd4b7519703346442 *NAMESPACE
 3f8ffe471800625822a08096313d8efd *R/IQ1.R
 7b38f8c49328edfec2649af90fa5d300 *R/IQ2.R
@@ -58,16 +58,15 @@ e0b423688687eb5edca798fa19af2d1e *R/value.R
 ae91fec34b21c41c392b632f20545042 *R/value.default.R
 d023e7f654b0f2352262f69a5cecedf5 *R/valueEst.R
 5af033a81afec5ab179f2251d8ff208e *README.md
-538d26511f12c82d8f87e1ea53d1ec23 *build/vignette.rds
+85c4a4f11386ad9b77c69dd1c4e1fc1f *build/vignette.rds
 98066e0140251b933aa9064133933f7e *data/bmiData.RData
 b7bdbdc84a8e37124c5aa93fd8962619 *inst/CITATION
 5f7abce4b4758013db8d5e9200111be7 *inst/doc/iqLearn.R
 864f04405d10cb2581d610fb58d6678a *inst/doc/iqLearn.Rnw
-d1c388e3c4392fdc9efd59122eaf77e9 *inst/doc/iqLearn.pdf
+5e1736f1c4861d195a8b12b9febd7056 *inst/doc/iqLearn.pdf
 ac7c6893f5796c451b0ba2f921195e9f *man/IQ1.Rd
 0e897f69e7a2ba48b4f22c244ee346d5 *man/IQ2.Rd
 525a050b41172c2c87f5fbfedc7d5c74 *man/bmiData.Rd
-3332d942bb8e0b667c528fc0321d125d *man/iqLearn-package.Rd
 842be965081da26c2435629c3c70483b *man/iqResids.Rd
 9f9d83a47943b3256b4b14be01abd8a1 *man/learnIQ1.Rd
 d8217f5537c6913395cb45f580b2bc3a *man/learnIQ1cm.Rd
